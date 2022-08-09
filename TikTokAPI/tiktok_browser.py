@@ -45,7 +45,8 @@ class TikTokBrowser:
             "/share/item/explore/list",
             "/api/commit/item/digg/",
             "/node/share/*",
-            "/discover/render/*"
+            "/discover/render/*",
+            "/api/search/general/full/"
         ]
 
         parent_folder = os.path.dirname(__file__)

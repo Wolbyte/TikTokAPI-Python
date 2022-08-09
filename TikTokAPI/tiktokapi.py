@@ -1,14 +1,11 @@
-import os
 import string
 import random
 import urllib.parse
 from .utils import random_key, build_get_url, get_req_json, get_req_content, get_req_text
 from .tiktok_browser import TikTokBrowser
 
-
 class VideoException(Exception):
     pass
-
 
 class TikTokAPI(object):
 
@@ -19,13 +16,14 @@ class TikTokAPI(object):
         if cookie is None:
             cookie = {}
         self.verifyFp = cookie.get("s_v_web_id", "verify_kjf974fd_y7bupmR0_3uRm_43kF_Awde_8K95qt0GcpBk")
-        self.tt_webid = cookie.get("tt_webid", "6913027209393473025")
+        self.ttwid = cookie.get("ttwid", "1%7CMhKnCMzCxVVw3kSpS-jaL7O0tCAOq_Mp353eHXg1yTA%7C1660039432%7C9d89d8db0f975991d38c72c82b0cbb211539c3d24c8848f1f55663bf2fee54e8")
+        self.sessionid = cookie.get("sessionid", "50482f9b4d349ab384fe2764969c6577")
 
         self.headers = {
             'Host': 't.tiktok.com',
             'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:79.0) Gecko/20100101 Firefox/79.0',
             'Referer': 'https://www.tiktok.com/',
-            'Cookie': 'tt_webid_v2={}; tt_webid={}'.format(self.tt_webid, self.tt_webid)
+            'Cookie': 'ttwid={}; sessionid={}; s_v_web_id={}'.format(self.ttwid, self.sessionid, self.verifyFp),
         }
         self.language = language
         self.browser_lang = browser_lang
@@ -165,6 +163,37 @@ class TikTokAPI(object):
         }
         for key, val in self.default_params.items():
             params[key] = val
+        return self.send_get_request(url, params)
+
+    def searchHashtags(self, query: str, count: int):
+        url = "https://api2.musical.ly/aweme/v1/search/sug/"
+        params = {
+            "keyword": query.replace("#", ""),
+            "count": str(count),
+        }
+        for key, val in self.default_params.items():
+            params[key] = val
+        return self.send_get_request(url, params)
+
+    def getVideosByHashtags(self, hashtags: list[str], cursor: int):
+        url = self.base_url +"/search/general/full/"
+        req_default_params = {
+            "secUid": "",
+            "type": "3",
+            "minCursor": "0",
+            "maxCursor": "0",
+            "shareUid": "",
+            "recType": ""
+        }
+        params = {
+            "keyword": "%20".join(list("%23" + tag.replace(" ", "%20") for tag in hashtags)),
+            "cursor": str(cursor)
+        }
+        for key, val in req_default_params.items():
+            params[key] = val
+        for key, val in self.default_params.items():
+            params[key] = val
+
         return self.send_get_request(url, params)
 
     def getVideosByHashTag(self, hashTag, count=30):
