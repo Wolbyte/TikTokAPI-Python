@@ -16,8 +16,8 @@ class TikTokAPI(object):
         if cookie is None:
             cookie = {}
         self.verifyFp = cookie.get("s_v_web_id", "verify_kjf974fd_y7bupmR0_3uRm_43kF_Awde_8K95qt0GcpBk")
-        self.ttwid = cookie.get("ttwid", "1%7CMhKnCMzCxVVw3kSpS-jaL7O0tCAOq_Mp353eHXg1yTA%7C1660039432%7C9d89d8db0f975991d38c72c82b0cbb211539c3d24c8848f1f55663bf2fee54e8")
-        self.sessionid = cookie.get("sessionid", "50482f9b4d349ab384fe2764969c6577")
+        self.ttwid = cookie.get("ttwid", "1%7CfvPor4KL6zARY23Vxpqt88YEVxh5mate7Sv36qwlJxo%7C1660564559%7C2991d1723358a295ff7511761a9fc114086e1de75cafa2ae60211fe7e6e4a0e8")
+        self.sessionid = cookie.get("sessionid", "7e6e4b74e3e3ccfb64718964775aa9f6")
 
         self.headers = {
             'Host': 't.tiktok.com',
@@ -176,7 +176,7 @@ class TikTokAPI(object):
         return self.send_get_request(url, params)
 
     def getVideosByHashtags(self, hashtags: list[str], cursor: int):
-        url = self.base_url +"/search/general/full/"
+        url = self.base_url + "/search/general/full/"
         req_default_params = {
             "secUid": "",
             "type": "3",
@@ -261,12 +261,16 @@ class TikTokAPI(object):
             params[key] = val
         return self.send_get_request(url, params)
 
-    def downloadVideoById(self, video_id, save_path):
+    def downloadVideoById(self, video_id, save=True, save_path=None):
         video_info = self.getVideoById(video_id)
         video_url = video_info["itemInfo"]["itemStruct"]["video"]["playAddr"]
         video_data = get_req_content(video_url, params=None, headers=self.headers)
-        with open(save_path, 'wb') as f:
-            f.write(video_data)
+        
+        if (save and save_path is not None):
+            with open(save_path, 'wb') as f:
+                f.write(video_data)
+        else:
+            return video_data
 
     def downloadVideoByIdNoWatermark(self, video_id, save_path):
         video_info = self.getVideoById(video_id)
