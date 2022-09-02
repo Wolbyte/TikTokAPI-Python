@@ -271,6 +271,24 @@ class TikTokAPI(object):
                 f.write(video_data)
         else:
             return video_data
+    
+    def downloadVideoByUrl(self, video_url, save=True, save_path=None):
+        video_data = get_req_content(video_url, params=None, headers=self.headers)
+        
+        if (save and save_path is not None):
+            with open(save_path, 'wb') as f:
+                f.write(video_data)
+        else:
+            return video_data
+    
+    def downloadImageByUrl(self, url, save=True, save_path=None):
+        image_data = get_req_content(url, params=None, headers=self.headers)
+        
+        if (save and save_path is not None):
+            with open(save_path, 'wb') as f:
+                f.write(image_data)
+        else:
+            return image_data
 
     def downloadVideoByIdNoWatermark(self, video_id, save_path):
         video_info = self.getVideoById(video_id)
